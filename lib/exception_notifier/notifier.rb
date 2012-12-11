@@ -155,8 +155,15 @@ class ExceptionNotifier
       subject = compose_subject
       name = @env.nil? ? 'background_exception_notification' : 'exception_notification'
 
-      mail = mail(:to => @options[:exception_recipients], :from => @options[:sender_address],
-           :subject => subject, :template_name => name) do |format|
+      mail_options = {
+        :to => @options[:exception_recipients], 
+        :from => @options[:sender_address], 
+        :subject => subject,
+        :template_name => name
+      }
+      mail_options.merge!(@options[:more]) if @options.key?(:more)
+
+      mail = mail(mail_options) do |format|
         format.text
         format.html if html_mail?
       end
